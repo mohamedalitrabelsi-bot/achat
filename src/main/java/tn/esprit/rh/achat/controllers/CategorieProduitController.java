@@ -1,7 +1,7 @@
 package tn.esprit.rh.achat.controllers;
 
 import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.rh.achat.entities.CategorieProduit;
 import tn.esprit.rh.achat.services.ICategorieProduitService;
@@ -11,47 +11,38 @@ import java.util.List;
 @RestController
 @Api(tags = "Gestion des categories Produit")
 @RequestMapping("/categorieProduit")
+@RequiredArgsConstructor
 public class CategorieProduitController {
 
-	@Autowired
-	ICategorieProduitService categorieProduitService;
-	
-	// http://localhost:8089/SpringMVC/categorieProduit/retrieve-all-categorieProduit
-	@GetMapping("/retrieve-all-categorieProduit")
-	@ResponseBody
-	public List<CategorieProduit> getCategorieProduit() {
-		List<CategorieProduit> list = categorieProduitService.retrieveAllCategorieProduits();
-		return list;
-	}
+    private final ICategorieProduitService categorieProduitService;
 
-	// http://localhost:8089/SpringMVC/categorieProduit/retrieve-categorieProduit/8
-	@GetMapping("/retrieve-categorieProduit/{categorieProduit-id}")
-	@ResponseBody
-	public CategorieProduit retrieveCategorieProduit(@PathVariable("categorieProduit-id") Long categorieProduitId) {
-		return categorieProduitService.retrieveCategorieProduit(categorieProduitId);
-	}
+    // GET ALL
+    @GetMapping("/retrieve-all")
+    public List<CategorieProduit> getCategorieProduit() {
+        return categorieProduitService.retrieveAllCategorieProduits();
+    }
 
-	// http://localhost:8089/SpringMVC/categorieProduit/add-categorieProduit
-	@PostMapping("/add-categorieProduit")
-	@ResponseBody
-	public CategorieProduit addCategorieProduit(@RequestBody CategorieProduit cp) {
-		CategorieProduit categorieProduit = categorieProduitService.addCategorieProduit(cp);
-		return categorieProduit;
-	}
+    // GET BY ID
+    @GetMapping("/retrieve/{id}")
+    public CategorieProduit retrieveCategorieProduit(@PathVariable Long id) {
+        return categorieProduitService.retrieveCategorieProduit(id);
+    }
 
-	// http://localhost:8089/SpringMVC/categorieProduit/remove-categorieProduit/{categorieProduit-id}
-	@DeleteMapping("/remove-categorieProduit/{categorieProduit-id}")
-	@ResponseBody
-	public void removeCategorieProduit(@PathVariable("categorieProduit-id") Long categorieProduitId) {
-		categorieProduitService.deleteCategorieProduit(categorieProduitId);
-	}
+    // ADD
+    @PostMapping("/add")
+    public CategorieProduit addCategorieProduit(@RequestBody CategorieProduit cp) {
+        return categorieProduitService.addCategorieProduit(cp);
+    }
 
-	// http://localhost:8089/SpringMVC/categorieProduit/modify-categorieProduit
-	@PutMapping("/modify-categorieProduit")
-	@ResponseBody
-	public CategorieProduit modifyCategorieProduit(@RequestBody CategorieProduit categorieProduit) {
-		return categorieProduitService.updateCategorieProduit(categorieProduit);
-	}
+    // DELETE
+    @DeleteMapping("/remove/{id}")
+    public void removeCategorieProduit(@PathVariable Long id) {
+        categorieProduitService.deleteCategorieProduit(id);
+    }
 
-	
+    // UPDATE
+    @PutMapping("/modify")
+    public CategorieProduit modifyCategorieProduit(@RequestBody CategorieProduit categorieProduit) {
+        return categorieProduitService.updateCategorieProduit(categorieProduit);
+    }
 }
