@@ -12,6 +12,14 @@ pipeline {
     agent any
 
     // -------------------------------------------------------------------------
+    // Outils Maven et JDK configurés dans Jenkins Global Tool Configuration
+    // -------------------------------------------------------------------------
+    tools {
+        maven 'Maven'    // doit correspondre au nom configuré dans Jenkins
+        jdk   'Java17'   // Java 17 requis pour SonarQube / Nexus
+    }
+
+    // -------------------------------------------------------------------------
     // Variables d'environnement globales du pipeline
     // -------------------------------------------------------------------------
     environment {
@@ -26,9 +34,13 @@ pipeline {
         // Branche principale
         GIT_BRANCH      = "main"
         // Outil Maven configuré dans Jenkins (voir Global Tool Configuration)
-        MAVEN_TOOL      = "Maven-3.9"
+        MAVEN_TOOL      = "Maven"
         // Java Home (optionnel si JAVA_HOME est déjà défini sur l'agent)
-        // JAVA_HOME    = "/usr/lib/jvm/java-21-openjdk-amd64"
+        // JAVA_HOME    = "/usr/lib/jvm/java-17-openjdk-amd64"
+
+        // SonarQube
+        SONAR_HOST_URL  = 'http://localhost:9000'
+        SONAR_TOKEN     = 'sqa_65bc0f72cd66b9a9110fc9686c5f54918383b59a'
     }
 
     // -------------------------------------------------------------------------
@@ -130,7 +142,7 @@ pipeline {
                 // mvn clean compile :
                 //   clean   → supprime le répertoire target/
                 //   compile → compile les sources Java
-                sh 'mvn clean compile -B'
+                sh './mvnw clean compile -B'
                 // -B = batch mode (pas d'interactivité, sortie lisible dans Jenkins)
             }
             post {
@@ -153,7 +165,7 @@ pipeline {
                 echo "========================================="
 
                 // mvn test : exécute tous les tests unitaires
-                sh 'mvn test -B'
+                sh './mvnw test -B'
             }
             post {
                 always {
@@ -183,7 +195,7 @@ pipeline {
                 // mvn package :
                 //   - compile + test + génère le JAR/WAR final
                 //   -DskipTests : les tests ont déjà été exécutés au stage précédent
-                sh 'mvn package -DskipTests -B'
+                sh './mvnw package -DskipTests -B'
 
                 // Vérifier que le JAR a bien été créé
                 sh '''
@@ -199,12 +211,68 @@ pipeline {
         }
 
         // ---------------------------------------------------------------------
-        // STAGE 6 : Archivage des artefacts
+        // STAGE 6 : Analyse qualité du code avec SonarQube
+        // ---------------------------------------------------------------------
+        stage('📊 SonarQube Analysis') {
+            steps {
+                echo "========================================="
+                echo " STAGE 6 : Analyse SonarQube"
+                echo " URL : ${SONAR_HOST_URL}"
+                echo "========================================="
+
+                // Lance l'analyse statique du code via le plugin Sonar Maven
+                // -Dsonar.projectKey  : identifiant du projet dans SonarQube
+                // -Dsonar.host.url    : adresse du serveur SonarQube
+                // -Dsonar.login       : token d'authentification
+                sh """
+                    ./mvnw  sonar:sonar -B \
+                        -Dsonar.projectKey=achat \
+                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.login=sqa_65bc0f72cd66b9a9110fc9686c5f54918383b59a
+                """
+            }
+            post {
+                success {
+                    echo "✅ Analyse SonarQube terminée — consulter le dashboard : ${SONAR_HOST_URL}"
+                }
+                failure {
+                    echo "❌ Échec de l'analyse SonarQube — vérifier le token et l'URL"
+                }
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // STAGE 7 : Déploiement vers Nexus Repository
+        // ---------------------------------------------------------------------
+        stage('🚀 Deploy to Nexus') {
+            steps {
+                echo "========================================="
+                echo " STAGE 7 : Déploiement vers Nexus"
+                echo "========================================="
+
+                // mvn clean deploy :
+                //   - recompile, re-package et publie l'artefact vers Nexus
+                //   - Les coordonnées du dépôt Nexus doivent être définies
+                //     dans le pom.xml (<distributionManagement>) ou settings.xml
+                sh './mvnw clean deploy -DskipTests -B'
+            }
+            post {
+                success {
+                    echo "✅ Artefact déployé avec succès sur Nexus"
+                }
+                failure {
+                    echo "❌ Échec du déploiement Nexus — vérifier distributionManagement dans pom.xml"
+                }
+            }
+        }
+
+        // ---------------------------------------------------------------------
+        // STAGE 8 : Archivage des artefacts
         // ---------------------------------------------------------------------
         stage('💾 Archivage') {
             steps {
                 echo "========================================="
-                echo " STAGE 6 : Archivage des artefacts Jenkins"
+                echo " STAGE 8 : Archivage des artefacts Jenkins"
                 echo "========================================="
             }
             post {
