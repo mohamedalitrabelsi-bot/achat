@@ -40,7 +40,7 @@ pipeline {
 
         // SonarQube
         SONAR_HOST_URL  = 'http://localhost:9000'
-        SONAR_TOKEN     = 'sqa_65bc0f72cd66b9a9110fc9686c5f54918383b59a'
+        SONAR_TOKEN     = 'sqa_9f1d97bdbe5d25ab52191c63bfe41f44d6471005'
     }
 
     // -------------------------------------------------------------------------
@@ -228,7 +228,7 @@ pipeline {
                     ./mvnw  sonar:sonar -B \
                         -Dsonar.projectKey=achat \
                         -Dsonar.host.url=http://172.18.0.140:9000 \
-                        -Dsonar.login=sqa_32ab29096aed9dee98b3b8a1e5fc10d072e2d39c
+                        -Dsonar.login=sqa_9f1d97bdbe5d25ab52191c63bfe41f44d6471005
                 """
             }
             post {
