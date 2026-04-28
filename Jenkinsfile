@@ -16,7 +16,7 @@ pipeline {
     // -------------------------------------------------------------------------
     tools {
         maven 'Maven'    // doit correspondre au nom configuré dans Jenkins
-        jdk   'Java17'   // Java 17 requis pour SonarQube / Nexus
+        jdk   'Java21'   // Java 17 requis pour SonarQube / Nexus
     }
 
     // -------------------------------------------------------------------------
