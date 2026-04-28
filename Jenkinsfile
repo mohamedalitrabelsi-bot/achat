@@ -228,7 +228,7 @@ pipeline {
                     ./mvnw  sonar:sonar -B \
                         -Dsonar.projectKey=achat \
                         -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=sqa_65bc0f72cd66b9a9110fc9686c5f54918383b59a
+                        -Dsonar.login=squ_64fa3ad3da1ead68ee7e7df0d817b14b935f63f9
                 """
             }
             post {
