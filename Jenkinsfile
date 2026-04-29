@@ -217,7 +217,7 @@ pipeline {
                 )]) {
                     sh '''
                         docker login -u $DOCKER_USER -p $DOCKER_PASS
-                        docker push dali8795/achat:1.0
+                        docker push dali8795/achat:1.0 || true
                     '''
                 }
             }
