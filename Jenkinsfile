@@ -21,7 +21,7 @@ pipeline {
         GIT_BRANCH      = "main"
         MAVEN_TOOL      = "Maven"
         SONAR_HOST_URL  = 'http://localhost:9000'
-        SONAR_TOKEN     = 'sqa_9f1d97bdbe5d25ab52191c63bfe41f44d6471005'
+        SONAR_TOKEN     = 'sqa_d14a3bfdb29ecc8f10f30fb84b2140f097e9e8e9'
         DOCKER_IMAGE    = "dali8795/achat"
         DOCKER_TAG      = "1.0"
     }
@@ -161,7 +161,7 @@ pipeline {
                     ./mvnw sonar:sonar -B \
                         -Dsonar.projectKey=achat \
                         -Dsonar.host.url=http://172.18.0.140:9000 \
-                        -Dsonar.login=sqa_9f1d97bdbe5d25ab52191c63bfe41f44d6471005
+                        -Dsonar.login=sqa_d14a3bfdb29ecc8f10f30fb84b2140f097e9e8e9
                 """
             }
             post {
