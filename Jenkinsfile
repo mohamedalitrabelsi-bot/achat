@@ -17,7 +17,7 @@ pipeline {
         APP_NAME        = "achat"
         APP_VERSION     = "1.0"
         TARGET_DIR      = "target"
-        GIT_REPO_URL    = ""https://github.com/omar-bouhdida/achat.git""
+        GIT_REPO_URL    = "https://github.com/omar-bouhdida/achat.git"
         GIT_BRANCH      = "main"
         MAVEN_TOOL      = "Maven"
         SONAR_HOST_URL  = 'http://localhost:9000'
